@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f5">
+  <title>Spotstock</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">YOUR TRAVEL LIBRARY</p>
+        <h1>Spotstock</h1>
+      </div>
+      <button id="addBtn" class="primary">＋ スポット追加</button>
+    </header>
+
+    <section class="toolbar">
+      <label class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="スポット名・住所・メモを検索">
+      </label>
+      <div class="filter-row" id="categoryFilters" aria-label="ジャンルで絞り込む"></div>
+      <div class="sort-row">
+        <label>並び替え
+          <select id="sortSelect">
+            <option value="name">名前順</option>
+            <option value="category">ジャンル順</option>
+            <option value="distance">現在地から近い順</option>
+          </select>
+        </label>
+        <button id="locationBtn" class="secondary">現在地を取得</button>
+      </div>
+      <p id="locationStatus" class="muted small">近い順にするには現在地を取得してください。</p>
+    </section>
+
+    <section class="results-head">
+      <h2>保存したスポット <span id="resultCount" class="count">0</span></h2>
+      <div class="data-actions">
+        <button id="exportBtn" class="text-button">JSONを書き出す</button>
+        <label class="text-button file-label">JSONを読み込む<input id="importInput" type="file" accept=".json,application/json"></label>
+      </div>
+    </section>
+
+    <main id="spotList" class="spot-list"></main>
+    <p class="footnote">データはこのブラウザ内に保存されます。ブラウザのデータ消去や端末変更に備え、定期的にJSONを書き出してください。</p>
+  </div>
+
+  <dialog id="spotDialog">
+    <form id="spotForm" method="dialog">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">SPOT DETAILS</p>
+          <h2 id="dialogTitle">スポットを追加</h2>
+        </div>
+        <button type="button" id="closeDialogBtn" class="icon-button" aria-label="閉じる">×</button>
+      </div>
+      <input id="spotId" type="hidden">
+      <label>スポット名 <input id="nameInput" required maxlength="160" placeholder="例：気になるカフェ"></label>
+      <label>ジャンル
+        <select id="categoryInput">
+          <option>飲食店</option><option>カフェ</option><option>雑貨・ショッピング</option>
+          <option>観光</option><option>自然・公園</option><option>宿泊</option><option>その他</option>
+        </select>
+      </label>
+      <label>Google Mapsリンク <input id="mapUrlInput" type="url" placeholder="https://maps.google.com/..."></label>
+      <p class="hint">リンクから名前などを自動取得できない場合は、下の項目を入力してください。</p>
+      <label>住所 <input id="addressInput" placeholder="住所"></label>
+      <label>電話番号 <input id="phoneInput" type="tel" placeholder="電話番号"></label>
+      <label>最寄り駅 <input id="stationInput" placeholder="駅名・徒歩分数など"></label>
+      <div class="coord-row">
+        <label>緯度（距離順に必要） <input id="latInput" type="number" step="any" placeholder="例：35.6812"></label>
+        <label>経度 <input id="lngInput" type="number" step="any" placeholder="例：139.7671"></label>
+      </div>
+      <label>メモ <textarea id="memoInput" rows="3" placeholder="行きたい理由、気になるメニューなど"></textarea></label>
+      <div class="dialog-actions">
+        <button type="button" id="deleteBtn" class="danger hidden">削除</button>
+        <span class="grow"></span>
+        <button type="button" id="cancelBtn" class="secondary">キャンセル</button>
+        <button type="submit" class="primary">保存する</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
