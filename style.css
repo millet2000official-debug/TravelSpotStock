@@ -1,75 +1,186 @@
+/* 全要素で幅・高さの計算を分かりやすく統一 */
 * { box-sizing: border-box; }
+
+/* アプリ全体で使う色・角丸の共通設定 */
 :root {
   color-scheme: light;
-  --bg: #f7f7f5; --surface: #fff; --ink: #242424; --muted: #777771;
-  --line: #e7e7e2; --accent: #2f6b53; --accent-soft: #e8f1eb;
-  --radius: 14px;
+  --bg: #f7f5fb;
+  --surface: #ffffff;
+  --ink: #282431;
+  --muted: #777180;
+  --line: #e8e3ef;
+  --accent: #7952b3;
+  --accent-dark: #603b98;
+  --accent-soft: #eee6fa;
+  --accent-border: #d4c1ef;
+  --radius: 18px;
 }
-body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
+
+/* ページ全体の基本文字と背景 */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+/* フォーム部品もページと同じフォントを使用 */
 button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
-.app-shell { max-width: 920px; margin: 0 auto; padding: 28px 22px 48px; }
+
+/* コンテンツの最大幅と余白 */
+.app-shell { max-width: 980px; margin: 0 auto; padding: 28px 22px 48px; }
+
+/* ヘッダーはタイトルと追加ボタンを左右に配置 */
 .topbar { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-bottom:26px; }
-.eyebrow { font-size: 10px; letter-spacing: .14em; color: var(--muted); margin:0 0 5px; font-weight:700; }
-h1 { font-size: 30px; letter-spacing:-.04em; margin:0; }
+/* アプリアイコンとタイトルを横並びにする */
+.brand { display: flex; align-items: center; gap: 12px;}
+/* ヘッダーに表示するアイコンの大きさ */
+.brand-icon { width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;}
+h1 { font-size:30px; letter-spacing:-.04em; margin:0; }
 h2 { font-size:17px; margin:0; }
-.primary, .secondary, .danger { border:1px solid transparent; border-radius:10px; padding:10px 14px; font-weight:650; }
+
+/* ボタン共通の形状 */
+.primary, .secondary, .danger { border:1px solid transparent; border-radius:11px; padding:10px 14px; font-weight:650; transition:background .15s, border-color .15s; }
+/* 主操作は紫で統一 */
 .primary { background:var(--accent); color:white; }
+.primary:hover { background:var(--accent-dark); }
+/* 副操作は白地に枠線 */
 .secondary { background:var(--surface); border-color:var(--line); color:var(--ink); }
-.danger { background:#fff1f0; color:#a52b24; }
-.toolbar { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:24px; }
-.search-wrap { display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:10px; padding:0 12px; }
-.search-wrap span { font-size:23px; color:var(--muted); }
-.search-wrap input { border:0; outline:0; width:100%; padding:12px 0; background:transparent; }
-.filter-row { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
-.chip { background:#fff; border:1px solid var(--line); color:#555; padding:7px 11px; border-radius:999px; font-size:13px; }
-.chip.active { background:var(--accent-soft); border-color:#b8d1c0; color:var(--accent); font-weight:650; }
+/* 削除操作は淡い赤系で区別 */
+.danger { background:#fff0f1; color:#b42335; border-color:#f5cbd0; }
+
+/* 検索・絞り込みをまとめるパネル */
+.toolbar { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:24px; box-shadow:0 5px 18px rgba(56,35,79,.035); }
+/* 検索欄を左寄せにして、横幅を小さくする */
+.search-wrap { display: flex; align-items: center; gap: 9px; width: min(100%, 320px); border: 1px solid var(--line); border-radius: 12px; padding: 0 12px;}
+
+/* 検索アイコン */
+.search-wrap span { font-size: 23px; color: var(--muted);}
+
+/* 入力欄は検索欄の残り幅を使う */
+.search-wrap input { border: 0; outline: 0; width: 100%; min-width: 0; padding: 10px 0; background: transparent;}
+
+/* カテゴリー見出しと管理リンク */
+.filter-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:15px; color:var(--muted); font-size:12px; font-weight:650; }
+/* 検索欄とカテゴリー選択欄を3：2の比率で配置 */
+.filter-toolbar { display: grid; grid-template-columns: 3fr 2fr; gap: 10px; align-items: center; width: 100%;}
+/* 検索欄を親要素の幅いっぱいにする */
+.filter-toolbar .search-wrap { width: 100%; min-width: 0; box-sizing: border-box;}
+
+/* カテゴリー選択欄も割り当てられた幅に収める */
+.filter-toolbar #categorySelect {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.text-button { border:0; background:transparent; color:var(--accent); padding:5px 0; font-size:12px; text-decoration:none; }
+.text-button:hover { color:var(--accent-dark); text-decoration:underline; }
+/* 絞り込みチップの並び */
+.filter-row { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 15px; }
+/* 通常時は白、選択中は紫系にして緑色が残らないようにする */
+.chip { background:#fff; border:1px solid var(--line); color:#5c5665; padding:7px 11px; border-radius:999px; font-size:13px; }
+.chip.active, .chip[aria-pressed="true"] { background:var(--accent-soft); border-color:var(--accent-border); color:var(--accent-dark); font-weight:700; box-shadow:inset 0 0 0 1px rgba(121,82,179,.05); }
+
+/* 並び替えメニュー */
 .sort-row { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
 .sort-row label { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px; }
 select, input:not([type=file]), textarea { min-width:0; }
-.sort-row select { border:1px solid var(--line); border-radius:8px; background:white; padding:8px; color:var(--ink); }
+.sort-row select { border:1px solid var(--line); border-radius:9px; background:white; padding:8px; color:var(--ink); }
+
+/* 補足テキストの色とサイズ */
 .muted, .hint, .footnote { color:var(--muted); }
 .small { font-size:12px; margin:10px 0 0; }
+
+/* 一覧見出しとJSON入出力 */
 .results-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 2px 12px; }
-.count { font-size:12px; color:var(--muted); background:#eaeae6; padding:3px 7px; border-radius:6px; vertical-align:2px; }
+.count { font-size:12px; color:var(--accent-dark); background:var(--accent-soft); padding:3px 7px; border-radius:7px; vertical-align:2px; }
 .data-actions { display:flex; gap:12px; align-items:center; }
-.text-button { border:0; background:transparent; color:var(--accent); padding:5px 0; font-size:12px; text-decoration:none; }
-.file-label { cursor:pointer; } .file-label input { display:none; }
-.spot-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-.spot-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px; min-width:0; }
-.card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-.spot-name { font-size:16px; font-weight:700; line-height:1.35; margin:0 0 8px; overflow-wrap:anywhere; }
-.category-tag { display:inline-block; font-size:11px; background:#f0f0ed; color:#5d5d57; padding:4px 7px; border-radius:6px; margin-bottom:10px; }
-.distance { font-size:12px; color:var(--accent); white-space:nowrap; }
-.spot-info { font-size:13px; color:#62625d; margin:5px 0; overflow-wrap:anywhere; }
-.spot-memo { font-size:13px; color:#42423e; background:#fafaf8; border-radius:8px; padding:9px; margin-top:10px; white-space:pre-wrap; overflow-wrap:anywhere; }
-.card-actions { display:flex; gap:14px; border-top:1px solid var(--line); padding-top:11px; margin-top:13px; }
-.card-actions button, .card-actions a { border:0; background:transparent; color:var(--accent); padding:0; font-size:12px; text-decoration:none; }
+.file-label { cursor:pointer; }
+.file-label input { display:none; }
+
+/* スポットカードは一覧幅に応じて2列で配置 */
+.spot-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+/* Google Mapsの共有カードを参考にした横長のカード */
+.spot-card { display:grid; grid-template-columns:118px minmax(0,1fr); overflow:hidden; background:#f5fafb; border:1px solid rgba(220,229,231,.9); border-radius:22px; box-shadow:0 8px 22px rgba(35,48,52,.09); min-width:0; transition:transform .15s, box-shadow .15s; }
+.spot-card:hover { transform:translateY(-2px); box-shadow:0 12px 26px rgba(35,48,52,.13); }
+/* 写真が未登録の場合も崩れない地図アイコンのプレースホルダー */
+.card-visual { display:flex; align-items:center; justify-content:center; min-height:176px; background:linear-gradient(145deg,#e4e0f0,#d5e7e8); font-size:42px; }
+/* カード右側のテキストと操作 */
+.card-content { padding:15px 16px 13px; min-width:0; display:flex; flex-direction:column; }
+.card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+.spot-name { font-size:17px; font-weight:750; line-height:1.3; margin:0 0 6px; overflow-wrap:anywhere; }
+.category-tag { display:inline-block; font-size:10px; background:var(--accent-soft); color:var(--accent-dark); padding:4px 7px; border-radius:6px; margin-bottom:8px; }
+.spot-info { font-size:12px; color:#62616a; margin:2px 0; overflow-wrap:anywhere; }
+.spot-memo { font-size:12px; color:#4f4a58; background:rgba(255,255,255,.7); border-radius:8px; padding:6px; margin-top:5px; white-space:pre-wrap; overflow-wrap:anywhere; }
+/* カード下部のGoogle Mapsリンクと編集操作 */
+.card-actions { display:flex; flex-wrap:wrap; gap:13px; border-top:1px solid #e1e9ea; padding-top:8px; margin-top:8px; padding-bottom:1px; }
+.card-actions button, .card-actions a { border:0; background:transparent; color:#087f8c; padding:0; font-size:12px; font-weight:650; text-decoration:none; }
+.card-actions button { color:var(--accent); }
+.card-actions a:hover, .card-actions button:hover { text-decoration:underline; }
+
+/* データがない時の案内 */
 .empty { text-align:center; padding:48px 20px; color:var(--muted); background:white; border:1px dashed var(--line); border-radius:var(--radius); grid-column:1/-1; }
 .footnote { font-size:11px; margin-top:22px; line-height:1.7; }
-dialog { border:1px solid var(--line); border-radius:18px; width:min(560px, calc(100% - 24px)); padding:0; max-height:90vh; }
-dialog::backdrop { background:rgba(20,24,21,.42); backdrop-filter:blur(2px); }
+
+/* ダイアログ共通の外観 */
+dialog { border:1px solid var(--line); border-radius:20px; width:min(600px, calc(100% - 24px)); padding:0; max-height:90vh; box-shadow:0 24px 70px rgba(35,25,50,.2); }
+dialog::backdrop { background:rgba(34,27,43,.42); backdrop-filter:blur(3px); }
 dialog form { padding:22px; display:grid; gap:13px; overflow:auto; }
 .dialog-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
 .dialog-head h2 { font-size:21px; }
 .icon-button { border:0; background:transparent; font-size:27px; color:var(--muted); }
-dialog label { display:grid; gap:6px; font-size:12px; color:#565650; font-weight:650; }
+
+/* Notion風：項目名を左、入力欄を右に配置 */
+dialog label.form-row { display:grid; grid-template-columns:120px minmax(0,1fr); align-items:center; gap:14px; font-size:13px; color:#565160; font-weight:650; }
 dialog input, dialog select, dialog textarea { width:100%; border:1px solid var(--line); border-radius:9px; padding:10px 11px; color:var(--ink); background:white; font-size:14px; }
+dialog input:focus, dialog select:focus, dialog textarea:focus { outline:2px solid #d8c6f2; border-color:var(--accent); }
+dialog label.form-row-top { align-items:start; }
 dialog textarea { resize:vertical; }
-.hint { font-size:11px; margin:-7px 0 0; }
+.hint { font-size:11px; margin:-7px 0 0 134px; }
 .dialog-actions { display:flex; align-items:center; gap:8px; margin-top:5px; }
-.grow { flex:1; } .hidden { display:none; }
-.toast { position:fixed; bottom:20px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:#242a26; color:white; padding:10px 16px; border-radius:10px; font-size:13px; transition:.2s; max-width:calc(100% - 24px); }
+.grow { flex:1; }
+.hidden { display:none !important; }
+
+/* カテゴリー管理の追加欄と一覧 */
+.category-add-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+.category-add-row input { width:100%; border:1px solid var(--line); border-radius:9px; padding:10px 11px; }
+.category-manager-list { display:grid; gap:8px; }
+.category-manager-item { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:8px; padding:9px 10px; border:1px solid var(--line); border-radius:10px; }
+.category-manager-name { min-width:0; overflow-wrap:anywhere; font-size:13px; }
+.category-manager-item button { border:0; background:var(--accent-soft); color:var(--accent-dark); border-radius:8px; padding:6px 9px; font-size:12px; font-weight:650; }
+.category-manager-item .category-delete { background:#fff0f1; color:#b42335; }
+/* カテゴリー選択欄を検索欄の下に左寄せで配置 */
+.category-filter { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--muted); font-size: 12px;}
+/* カテゴリーの選択欄 */
+.category-filter select { max-width: 220px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--ink); padding: 8px 10px; font-size: 13px;}
+
+/* 画面下部に一時表示する操作メッセージ */
+.toast { position:fixed; bottom:20px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:#2c2535; color:white; padding:10px 16px; border-radius:10px; font-size:13px; transition:.2s; max-width:calc(100% - 24px); z-index:10; }
 .toast.show { opacity:1; transform:translate(-50%,0); }
+
+/* スマートフォンでは1列表示にしてフォームも縦幅を抑える */
 @media (max-width:620px) {
   .app-shell { padding:20px 14px 34px; }
   .topbar { align-items:flex-start; }
-  h1 { font-size:26px; }
+  h1 { font-size:24px; }
   .topbar .primary { padding:9px 10px; font-size:12px; white-space:nowrap; }
   .spot-list { grid-template-columns:1fr; }
   .results-head { align-items:flex-start; flex-direction:column; gap:6px; }
   .toolbar { padding:12px; }
+  .spot-card { grid-template-columns:100px minmax(0,1fr); }
+  .card-visual { min-height:160px; font-size:34px; }
+  .card-content { padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; }
 }
-
-.coord-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-@media (max-width:420px) { .coord-row { grid-template-columns:1fr; } }
+@media (max-width:420px) {
+  /* 小さな画面ではカードの写真エリアをさらに細くする */
+  .spot-card { grid-template-columns:82px minmax(0,1fr); }
+  /* カード左側のビジュアル部分を低くする */
+  .card-visual {display: flex; align-items: center; justify-content: center; min-height: 112px; background: linear-gradient(145deg, #e4e0f0, #d5e7e8); font-size: 32px;}
+  .spot-name { font-size:15px; margin: 0 0 4px }
+  /* 入力フォームは狭い画面だけ上下配置にして入力しやすくする */
+  dialog label.form-row { grid-template-columns:1fr; gap:5px; }
+  .hint { margin:-7px 0 0; }
+  dialog form { padding:17px; }
+}
